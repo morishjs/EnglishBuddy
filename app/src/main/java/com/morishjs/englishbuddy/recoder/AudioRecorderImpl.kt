@@ -13,18 +13,16 @@ import javax.inject.Inject
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createTempFile
 
-class AudioRecorderImpl @Inject constructor(
-    @ActivityContext private val context: Context
-) : AudioRecorder {
+class AudioRecorderImpl @Inject constructor() : AudioRecorder {
     private var recorder: MediaRecorder? = null
 
-    private fun createRecorder(): MediaRecorder {
+    private fun createRecorder(context: Context): MediaRecorder {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             MediaRecorder(context)
         } else MediaRecorder()
     }
 
-    override fun start() {
+    override fun start(context: Context) {
         val tempFile = createTempFile(prefix = "tempRecording", suffix = ".mp4")
         if (ActivityCompat.checkSelfPermission(
                 context,
@@ -37,7 +35,7 @@ class AudioRecorderImpl @Inject constructor(
                 10,
             );
         } else {
-            createRecorder().apply {
+            createRecorder(context).apply {
                 setAudioSource(MediaRecorder.AudioSource.MIC)
                 setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
                 setAudioEncoder(MediaRecorder.AudioEncoder.AAC)

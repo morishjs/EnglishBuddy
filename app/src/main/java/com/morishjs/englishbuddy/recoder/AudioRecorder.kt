@@ -1,6 +1,8 @@
 package com.morishjs.englishbuddy.recoder
 
+import android.content.Context
+
 interface AudioRecorder {
-    fun start()
     fun stop()
+    fun start(context: Context)
 }
