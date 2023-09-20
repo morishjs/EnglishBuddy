@@ -9,6 +9,7 @@ import android.media.MediaRecorder
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import dagger.hilt.android.qualifiers.ActivityContext
+import java.nio.file.Path
 import javax.inject.Inject
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createTempFile
@@ -22,8 +23,7 @@ class AudioRecorderImpl @Inject constructor() : AudioRecorder {
         } else MediaRecorder()
     }
 
-    override fun start(context: Context) {
-        val tempFile = createTempFile(prefix = "tempRecording", suffix = ".mp4")
+    override fun start(context: Context): Path? =
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.RECORD_AUDIO
@@ -33,8 +33,12 @@ class AudioRecorderImpl @Inject constructor() : AudioRecorder {
                 context as Activity,
                 arrayOf(Manifest.permission.RECORD_AUDIO),
                 10,
-            );
+            )
+
+            null
         } else {
+            val tempFile = createTempFile(prefix = "tempRecording", suffix = ".mp4")
+
             createRecorder(context).apply {
                 setAudioSource(MediaRecorder.AudioSource.MIC)
                 setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
@@ -46,8 +50,9 @@ class AudioRecorderImpl @Inject constructor() : AudioRecorder {
 
                 recorder = this
             }
+
+            tempFile
         }
-    }
 
     override fun stop() {
         recorder?.stop()

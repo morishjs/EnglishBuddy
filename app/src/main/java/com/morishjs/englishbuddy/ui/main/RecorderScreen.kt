@@ -2,6 +2,9 @@ package com.morishjs.englishbuddy.ui.main
 
 import android.content.Context
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,6 +26,7 @@ import dagger.hilt.android.qualifiers.ActivityContext
 fun RecorderUI(context: Context) {
     val recorderViewModel = hiltViewModel<RecorderViewModel>()
     val isStarted = recorderViewModel.isStarted.collectAsState()
+    val transcript = recorderViewModel.transcript.collectAsState()
 
     EnglishBuddyTheme(true) {
         Surface(
@@ -36,17 +40,26 @@ fun RecorderUI(context: Context) {
                     recorderViewModel.start(context)
                 }
             }) {
-                Surface(
-                    modifier = Modifier.size(64.dp),
-                    shape = CircleShape,
-                    color = if (isStarted.value) Color.Red else Color.Green,
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    Center {
-                        Text(
-                            text = "🎤",
-                            modifier = Modifier.padding(16.dp)
-                        )
+                    Surface(
+                        modifier = Modifier.size(64.dp),
+                        shape = CircleShape,
+                        color = if (isStarted.value) Color.Red else Color.Green,
+                    ) {
+                        Center {
+                            Text(
+                                text = "🎤",
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
                     }
+
+                    Text(
+                        text = transcript.value,
+                        color = Color.White
+                    )
                 }
             }
         }

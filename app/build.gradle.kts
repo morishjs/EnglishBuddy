@@ -52,6 +52,9 @@ android {
     }
 }
 
+val ktor_version = "2.3.4"
+
+
 dependencies {
 
     implementation("androidx.core:core-ktx:1.9.0")
@@ -62,6 +65,13 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+
+    // OpenAI
+    implementation("com.aallam.openai:openai-client:3.4.0")
+
+    // HTTP
+    implementation("io.ktor:ktor-client-android:$ktor_version")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
 
 //    Hilt
     implementation("com.google.dagger:hilt-android:2.44")
