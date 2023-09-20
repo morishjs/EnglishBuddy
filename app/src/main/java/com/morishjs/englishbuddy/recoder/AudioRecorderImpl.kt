@@ -7,15 +7,33 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Build
+import android.util.Log
 import androidx.core.app.ActivityCompat
-import dagger.hilt.android.qualifiers.ActivityContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.nio.file.Path
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createTempFile
 
 class AudioRecorderImpl @Inject constructor() : AudioRecorder {
     private var recorder: MediaRecorder? = null
+    private val silenceThreshold = 500  // This value depends on your need, might need adjustment
+    private val silenceDuration = 2000L   // 2 seconds of silence
+    private var lastSoundTime: Long = 0
+
+    private var activeJob: Job? = null
+
+    private val _isStopped = MutableStateFlow(true)
+    override val isStopped: StateFlow<Boolean> get() = _isStopped
 
     private fun createRecorder(context: Context): MediaRecorder {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -51,12 +69,42 @@ class AudioRecorderImpl @Inject constructor() : AudioRecorder {
                 recorder = this
             }
 
+            lastSoundTime = System.currentTimeMillis()
+            activeJob = CoroutineScope(Dispatchers.Default).launch {
+                startCheckingAmplitude()
+            }
+            _isStopped.value = false
+
             tempFile
         }
 
     override fun stop() {
+        activeJob?.cancel()
+        activeJob = null
+
         recorder?.stop()
         recorder?.reset()
         recorder = null
+
+        _isStopped.value = true
+    }
+
+    private suspend fun startCheckingAmplitude() {
+        while (activeJob?.isActive === true) {
+            delay(100)
+
+            Log.d("AudioRecorder", "Amplitude: ${recorder?.maxAmplitude ?: 0}")
+
+            if ((recorder?.maxAmplitude ?: 0) > silenceThreshold) {
+                lastSoundTime = System.currentTimeMillis()
+            }
+
+            if (System.currentTimeMillis() - lastSoundTime > silenceDuration) {
+                withContext(Dispatchers.Main) {
+                    stop()
+                }
+                break
+            }
+        }
     }
 }
