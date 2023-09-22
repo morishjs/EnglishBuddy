@@ -1,12 +1,9 @@
 package com.morishjs.englishbuddy.ui.main
 
 import android.content.Context
-import android.speech.tts.TextToSpeech
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,21 +21,24 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.morishjs.englishbuddy.ui.Center
 import com.morishjs.englishbuddy.ui.theme.EnglishBuddyTheme
-import dagger.hilt.android.qualifiers.ActivityContext
-import java.util.Locale
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
-fun RecorderUI(context: Context) {
+fun RecorderUI(
+    context: Context,
+    responseListener: MutableSharedFlow<String>,
+) {
     val recorderViewModel = hiltViewModel<RecorderViewModel>()
 
     val isStarted = recorderViewModel.isStarted.collectAsState()
     val transcript = recorderViewModel.transcript.collectAsState()
     val response = recorderViewModel.responseMessage.collectAsState()
 
-    LaunchedEffect(key1 = response.value) {
+    LaunchedEffect(Unit) {
         recorderViewModel.responseMessage.collect { message ->
             if (message.isNotEmpty()) {
-                recorderViewModel.speakText(text = message, context = context)
+                responseListener.emit(message)
             }
         }
     }
@@ -61,9 +61,9 @@ fun RecorderUI(context: Context) {
                     ) {
                         Center(modifier = Modifier.clickable {
                             if (isStarted.value) {
-                                recorderViewModel.stop()
+                                recorderViewModel.stopRecording()
                             } else {
-                                recorderViewModel.start(context)
+                                recorderViewModel.startRecording(context)
                             }
                         }) {
                             Text(

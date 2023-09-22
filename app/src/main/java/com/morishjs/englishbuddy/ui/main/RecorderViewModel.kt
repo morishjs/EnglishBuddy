@@ -1,8 +1,6 @@
 package com.morishjs.englishbuddy.ui.main
 
 import android.content.Context
-import android.speech.tts.TextToSpeech
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aallam.openai.api.audio.TranscriptionRequest
@@ -14,14 +12,11 @@ import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import com.morishjs.englishbuddy.recoder.AudioRecorder
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okio.source
 import java.nio.file.Path
-import java.util.Locale
 import javax.inject.Inject
 import kotlin.io.path.name
 
@@ -47,8 +42,6 @@ class RecorderViewModel @Inject internal constructor(
     )
 
     var path: Path? = null
-
-    private lateinit var textToSpeech: TextToSpeech
 
     init {
         observeRecordingStop()
@@ -84,23 +77,12 @@ class RecorderViewModel @Inject internal constructor(
         }
     }
 
-    fun speakText(text: String, context: Context) {
-        textToSpeech = TextToSpeech(context) { status ->
-            if (status != TextToSpeech.ERROR) {
-                textToSpeech.language = Locale.US
-                textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
-            } else {
-                Log.e("TTS", "TTS ERROR")
-            }
-        }
-    }
-
-    fun start(context: Context) {
+    fun startRecording(context: Context) {
         path = recorder.start(context) ?: return
         _isStarted.value = true
     }
 
-    fun stop() {
+    fun stopRecording() {
         recorder.stop()
 
         updateTranscript()
