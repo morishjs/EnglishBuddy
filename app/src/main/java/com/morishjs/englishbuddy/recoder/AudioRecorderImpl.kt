@@ -27,7 +27,7 @@ import kotlin.io.path.createTempFile
 class AudioRecorderImpl @Inject constructor() : AudioRecorder {
     private var recorder: MediaRecorder? = null
     private val silenceThreshold = 500  // This value depends on your need, might need adjustment
-    private val silenceDuration = 2000L   // 2 seconds of silence
+    private val silenceDuration = 4000L   // 4 seconds of silence
     private var lastSoundTime: Long = 0
 
     private var activeJob: Job? = null
