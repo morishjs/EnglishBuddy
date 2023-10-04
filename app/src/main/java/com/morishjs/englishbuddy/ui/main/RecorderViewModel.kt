@@ -10,7 +10,7 @@ import com.aallam.openai.api.chat.ChatRole
 import com.aallam.openai.api.file.FileSource
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
-import com.morishjs.englishbuddy.recoder.AudioRecorder
+import com.morishjs.englishbuddy.data.RecorderRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +22,7 @@ import kotlin.io.path.name
 
 @HiltViewModel
 class RecorderViewModel @Inject internal constructor(
-    private val recorder: AudioRecorder,
+    private val recorderRepository: RecorderRepositoryImpl,
     private val openAI: OpenAI
 ) : ViewModel() {
     private val _isStarted = MutableStateFlow(false)
@@ -78,12 +78,12 @@ class RecorderViewModel @Inject internal constructor(
     }
 
     fun startRecording(context: Context) {
-        path = recorder.start(context) ?: return
+        path = recorderRepository.startRecording(context) ?: return
         _isStarted.value = true
     }
 
     fun stopRecording() {
-        recorder.stop()
+        recorderRepository.stopRecording()
 
         updateTranscript()
         _isStarted.value = false
@@ -113,7 +113,7 @@ class RecorderViewModel @Inject internal constructor(
 
     private fun observeRecordingStop() {
         viewModelScope.launch {
-            recorder.isStopped.collect { stopped ->
+            recorderRepository.isStopped.collect { stopped ->
                 if (stopped) {
                     updateTranscript()
                     _isStarted.value = false

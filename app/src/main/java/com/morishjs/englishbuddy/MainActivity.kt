@@ -8,14 +8,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.morishjs.englishbuddy.ui.main.RecorderUI
-import com.morishjs.englishbuddy.ui.main.RecorderViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -24,7 +23,7 @@ class MainActivity : ComponentActivity() {
     private var permissionGranted: Boolean = false
 
     private val _responseListener = MutableSharedFlow<String>()
-    private val responseListener: SharedFlow<String> = _responseListener
+    private val responseListener = _responseListener.asSharedFlow()
 
     private lateinit var textToSpeech: TextToSpeech
 
@@ -59,8 +58,10 @@ class MainActivity : ComponentActivity() {
 
     private fun observeResponse() {
         lifecycleScope.launch {
-            responseListener.collect { text ->
-                textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                responseListener.collect { text ->
+                    textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+                }
             }
         }
     }
