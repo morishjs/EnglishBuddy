@@ -1,6 +1,8 @@
 package com.morishjs.englishbuddy.ui.main
 
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aallam.openai.api.audio.TranscriptionRequest
@@ -11,6 +13,7 @@ import com.aallam.openai.api.file.FileSource
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import com.morishjs.englishbuddy.data.RecorderRepositoryImpl
+import com.morishjs.englishbuddy.service.RecorderService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -78,14 +81,27 @@ class RecorderViewModel @Inject internal constructor(
     }
 
     fun startRecording(context: Context) {
-        path = recorderRepository.startRecording(context) ?: return
+//        path = recorderRepository.startRecording(context) ?: return
+        Intent(context, RecorderService::class.java).apply {
+            action = RecorderService.ACTION_START
+        }.also {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(it)
+            } else {
+                context.startService(it)
+            }
+        }
+
         _isStarted.value = true
     }
 
-    fun stopRecording() {
-        recorderRepository.stopRecording()
+    fun stopRecording(context: Context) {
+        val intent = Intent(context, RecorderService::class.java).apply {
+            action = RecorderService.ACTION_STOP
+        }
+        context.startService(intent)
 
-        updateTranscript()
+//        updateTranscript()
         _isStarted.value = false
     }
 

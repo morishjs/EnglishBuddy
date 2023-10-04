@@ -61,7 +61,7 @@ fun RecorderUI(
                     ) {
                         Center(modifier = Modifier.clickable {
                             if (isStarted.value) {
-                                recorderViewModel.stopRecording()
+                                recorderViewModel.stopRecording(context)
                             } else {
                                 recorderViewModel.startRecording(context)
                             }
