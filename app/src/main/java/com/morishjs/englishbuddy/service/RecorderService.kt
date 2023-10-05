@@ -3,7 +3,6 @@ package com.morishjs.englishbuddy.service
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import android.util.Log
 import com.morishjs.englishbuddy.data.RecorderRepository
 import com.morishjs.englishbuddy.speechtotext.SpeechToText
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,14 +31,7 @@ class RecorderService: Service() {
         const val ACTION_STOP = "RECORD_STOP"
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        Log.d("RecorderService", "onCreate called")
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("RecorderService", "onStartCommand called")
-
         when(intent?.action) {
             ACTION_START -> {
                 // Start recording
@@ -50,7 +42,6 @@ class RecorderService: Service() {
                 path?.let {
                     scope.launch {
                         val s = speechToText.transcript(it)
-                        Log.d("RecorderService", s)
                     }
                 }
 

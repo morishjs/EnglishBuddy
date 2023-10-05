@@ -5,7 +5,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.media.AudioFormat
 import android.media.MediaRecorder
 import android.os.Build
 import android.util.Log
@@ -89,7 +88,7 @@ class AudioRecorderImpl @Inject constructor() : AudioRecorder {
     }
 
     private suspend fun startCheckingAmplitude() {
-        while (activeJob?.isActive === true) {
+        while (activeJob?.isActive == true) {
             delay(100)
 
             Log.d("AudioRecorder", "Amplitude: ${recorder?.maxAmplitude ?: 0}")
