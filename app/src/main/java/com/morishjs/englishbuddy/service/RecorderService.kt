@@ -5,14 +5,27 @@ import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import com.morishjs.englishbuddy.data.RecorderRepository
+import com.morishjs.englishbuddy.speechtotext.SpeechToText
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import java.nio.file.Path
 import javax.inject.Inject
-import kotlin.io.path.absolutePathString
 
 @AndroidEntryPoint
 class RecorderService: Service() {
+    private val job = SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.IO + job)
+
     @Inject
     lateinit var recorderRepository: RecorderRepository
+
+    @Inject
+    lateinit var speechToText: SpeechToText
+
+    var path: Path? = null
 
     companion object {
         const val ACTION_START = "RECORD_START"
@@ -30,13 +43,17 @@ class RecorderService: Service() {
         when(intent?.action) {
             ACTION_START -> {
                 // Start recording
-                val path = recorderRepository.startRecording(this)
-                path?.let {
-                    Log.d("Path", it.absolutePathString())
-                }
+                path = recorderRepository.startRecording(this)
             }
             ACTION_STOP -> {
                 // Stop recording
+                path?.let {
+                    scope.launch {
+                        val s = speechToText.transcript(it)
+                        Log.d("RecorderService", s)
+                    }
+                }
+
                 recorderRepository.stopRecording()
             }
         }
@@ -45,5 +62,10 @@ class RecorderService: Service() {
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 }

@@ -26,7 +26,6 @@ import kotlin.io.path.name
 @HiltViewModel
 class RecorderViewModel @Inject internal constructor(
     private val recorderRepository: RecorderRepositoryImpl,
-    private val openAI: OpenAI
 ) : ViewModel() {
     private val _isStarted = MutableStateFlow(false)
     val isStarted: MutableStateFlow<Boolean> = _isStarted
@@ -48,7 +47,7 @@ class RecorderViewModel @Inject internal constructor(
 
     init {
         observeRecordingStop()
-        observeTranscript()
+//        observeTranscript()
     }
 
     private fun observeTranscript() {
@@ -64,18 +63,18 @@ class RecorderViewModel @Inject internal constructor(
                         )
                     )
                 )
-
-                val responseMessage = openAI.chatCompletion(chatCompletionRequest)
-                    .choices
-                    .map {
-                        it.message
-                    }
-                    .first()
-                chatMessages.add(responseMessage)
-
-                responseMessage.content?.let {
-                    _responseMessage.value = it
-                }
+//
+//                val responseMessage = openAI.chatCompletion(chatCompletionRequest)
+//                    .choices
+//                    .map {
+//                        it.message
+//                    }
+//                    .first()
+//                chatMessages.add(responseMessage)
+//
+//                responseMessage.content?.let {
+//                    _responseMessage.value = it
+//                }
             }
         }
     }
@@ -115,14 +114,15 @@ class RecorderViewModel @Inject internal constructor(
             language = "en",
         )
 
-        val response = openAI.transcription(request)
-        return response.text
+//        val response = openAI.transcription(request)
+//        return response.text
+        return ""
     }
 
     private fun updateTranscript() {
         path?.let {
             viewModelScope.launch {
-                _transcript.value = transcript(it)
+//                _transcript.value = transcript(it)
             }
         }
     }

@@ -5,6 +5,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.media.AudioFormat
 import android.media.MediaRecorder
 import android.os.Build
 import android.util.Log
@@ -58,7 +59,7 @@ class AudioRecorderImpl @Inject constructor() : AudioRecorder {
             createRecorder(context).apply {
                 setAudioSource(MediaRecorder.AudioSource.MIC)
                 setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-                setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
                 setOutputFile(tempFile.absolutePathString())
 
                 prepare()
