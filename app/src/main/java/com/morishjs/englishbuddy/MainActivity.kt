@@ -1,22 +1,19 @@
 package com.morishjs.englishbuddy
 
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import com.morishjs.englishbuddy.service.TextToSpeechService
 import com.morishjs.englishbuddy.ui.main.RecorderUI
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
-import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -24,8 +21,6 @@ class MainActivity : ComponentActivity() {
 
     private val _responseListener = MutableSharedFlow<String>()
     private val responseListener = _responseListener.asSharedFlow()
-
-    private lateinit var textToSpeech: TextToSpeech
 
     private val voicePermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -39,7 +34,6 @@ class MainActivity : ComponentActivity() {
         requestPermission()
 
         initTextToSpeech()
-        observeResponse()
 
         setContent {
             RecorderUI(this, _responseListener)
@@ -47,23 +41,17 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun initTextToSpeech() {
-        textToSpeech = TextToSpeech(this) { status ->
-            if (status != TextToSpeech.ERROR) {
-                textToSpeech.language = Locale.US
-            } else {
-                Log.e("TTS", "TTS ERROR")
+        Intent(this, TextToSpeechService::class.java)
+            .apply {
+                action = TextToSpeechService.ACTION_INIT
             }
-        }
-    }
-
-    private fun observeResponse() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                responseListener.collect { text ->
-                    textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+            .also { intent ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(intent)
+                } else {
+                    startService(intent)
                 }
             }
-        }
     }
 
     private fun requestPermission() {
@@ -76,11 +64,5 @@ class MainActivity : ComponentActivity() {
         } else {
             permissionGranted = true
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        textToSpeech.stop()
-        textToSpeech.shutdown()
     }
 }

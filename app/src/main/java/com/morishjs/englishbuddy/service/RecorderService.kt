@@ -14,7 +14,7 @@ import java.nio.file.Path
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RecorderService: Service() {
+class RecorderService : Service() {
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
 
@@ -32,16 +32,25 @@ class RecorderService: Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when(intent?.action) {
+        when (intent?.action) {
             ACTION_START -> {
                 // Start recording
                 path = recorderRepository.startRecording(this)
             }
+
             ACTION_STOP -> {
                 // Stop recording
                 path?.let {
                     scope.launch {
                         val s = speechToText.transcript(it)
+
+                        Intent(this@RecorderService, TextToSpeechService::class.java)
+                            .apply {
+                                action = TextToSpeechService.ACTION_START
+                                putExtra("text", s)
+                            }.also {
+                                startService(it)
+                            }
                     }
                 }
 
