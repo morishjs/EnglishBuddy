@@ -7,30 +7,17 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.startForegroundService
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aallam.openai.api.audio.TranscriptionRequest
-import com.aallam.openai.api.chat.ChatCompletionRequest
-import com.aallam.openai.api.chat.ChatMessage
-import com.aallam.openai.api.chat.ChatRole
-import com.aallam.openai.api.file.FileSource
-import com.aallam.openai.api.model.ModelId
-import com.aallam.openai.client.OpenAI
 import com.morishjs.englishbuddy.chatbot.Chatbot
 import com.morishjs.englishbuddy.data.ChatMessageRepository
-import com.morishjs.englishbuddy.data.RecorderRepository
-import com.morishjs.englishbuddy.data.RecorderRepositoryImpl
 import com.morishjs.englishbuddy.domain.Role
 import com.morishjs.englishbuddy.service.RecorderService
 import com.morishjs.englishbuddy.service.TextToSpeechService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okio.source
-import java.nio.file.Path
 import javax.inject.Inject
-import kotlin.io.path.name
 
 @HiltViewModel
 class RecorderViewModel @Inject internal constructor(

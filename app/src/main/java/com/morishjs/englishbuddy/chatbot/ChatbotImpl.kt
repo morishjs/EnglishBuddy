@@ -24,7 +24,8 @@ class ChatbotImpl @Inject constructor(
         val chatCompletionRequest = ChatCompletionRequest(
             model = ModelId("gpt-3.5-turbo"),
             n = 1,
-            messages = chatMessages
+            messages = chatMessages,
+            maxTokens = 100,
         )
 
         val responseMessage = openAI.chatCompletion(chatCompletionRequest)

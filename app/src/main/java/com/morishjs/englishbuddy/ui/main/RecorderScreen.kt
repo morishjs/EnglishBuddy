@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -16,6 +19,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,8 +33,7 @@ import com.morishjs.englishbuddy.domain.Role
 import com.morishjs.englishbuddy.ui.Center
 import com.morishjs.englishbuddy.ui.theme.EnglishBuddyTheme
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -36,6 +43,10 @@ fun RecorderUI(
 ) {
     val recorderViewModel = hiltViewModel<RecorderViewModel>()
 
+    val listState = rememberLazyListState()
+
+    var isLoading by remember { mutableStateOf(true) }
+
     val isStarted = recorderViewModel.isStarted.collectAsState()
     val chatMessages = recorderViewModel.chatMessages(0).collectAsState(listOf())
 
@@ -43,6 +54,18 @@ fun RecorderUI(
         withContext(Dispatchers.IO) {
             recorderViewModel.initChat(context)
         }
+    }
+
+    LaunchedEffect(chatMessages.value) {
+        snapshotFlow { chatMessages.value.size }
+            .collect { newSize ->
+                isLoading = false
+                if (newSize == 0) return@collect
+
+                launch {
+                    listState.animateScrollToItem(newSize - 1)
+                }
+            }
     }
 
     EnglishBuddyTheme(true) {
@@ -75,11 +98,21 @@ fun RecorderUI(
                         }
                     }
 
-                    chatMessages.value.filter { it.role != Role.SYSTEM }.forEach { message ->
+                    if (isLoading) {
                         Text(
-                            text = message.content,
-                            color = if (message.role == Role.BOT) Color.Yellow else Color.White
+                            text = "Loading...",
+                            color = Color.White,
                         )
+                    } else {
+                        LazyColumn(state = listState) {
+                            items(chatMessages.value.filter { it.role != Role.SYSTEM }) { message ->
+                                Text(
+                                    text = message.content,
+                                    color = if (message.role == Role.BOT) Color.Yellow else Color.White,
+                                    modifier = Modifier.padding(8.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }
