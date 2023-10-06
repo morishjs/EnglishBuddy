@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestPermission()
@@ -37,7 +38,7 @@ class MainActivity : ComponentActivity() {
         initTextToSpeech()
 
         setContent {
-            RecorderUI(this, _responseListener)
+            RecorderUI(this)
         }
     }
 

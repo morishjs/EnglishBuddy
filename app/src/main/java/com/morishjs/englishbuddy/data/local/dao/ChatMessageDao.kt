@@ -13,4 +13,7 @@ interface ChatMessageDao {
 
     @Insert
     fun addChatMessage(chatMessage: ChatMessageEntity)
+
+    @Query("SELECT EXISTS(SELECT * FROM chat_message WHERE chatId = :chatId)")
+    fun hasMessages(chatId: Int): Boolean
 }

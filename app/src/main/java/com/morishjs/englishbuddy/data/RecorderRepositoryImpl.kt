@@ -7,8 +7,6 @@ import javax.inject.Inject
 class RecorderRepositoryImpl @Inject internal constructor(
     private val recorder: AudioRecorder,
 ): RecorderRepository {
-    val isStopped = recorder.isStopped
-
     override fun startRecording(context: Context) = recorder.start(context)
 
     override fun stopRecording() {

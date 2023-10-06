@@ -3,6 +3,7 @@ package com.morishjs.englishbuddy.data
 import com.morishjs.englishbuddy.data.local.dao.ChatMessageDao
 import com.morishjs.englishbuddy.data.local.model.ChatMessageEntity
 import com.morishjs.englishbuddy.domain.ChatMessage
+import com.morishjs.englishbuddy.domain.Role
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -15,8 +16,13 @@ class ChatMessageRepositoryImpl @Inject constructor(
             ChatMessageEntity(
                 chatId = message.chatId,
                 content = message.content,
+                role = message.role.value
             )
         )
+    }
+
+    override fun hasMessages(chatId: Int): Boolean {
+        return chatMessageDataSource.hasMessages(chatId)
     }
 
     override fun getChatMessages(chatId: Int): Flow<List<ChatMessage>> =
@@ -25,6 +31,7 @@ class ChatMessageRepositoryImpl @Inject constructor(
                 ChatMessage(
                     chatId = chatMessageEntity.chatId,
                     content = chatMessageEntity.content,
+                    role = Role(chatMessageEntity.role)
                 )
             }
         }

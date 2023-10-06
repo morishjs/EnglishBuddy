@@ -1,6 +1,8 @@
 package com.morishjs.englishbuddy.ui.main
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,27 +21,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.morishjs.englishbuddy.domain.Role
 import com.morishjs.englishbuddy.ui.Center
 import com.morishjs.englishbuddy.ui.theme.EnglishBuddyTheme
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.withContext
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecorderUI(
     context: Context,
-    responseListener: MutableSharedFlow<String>,
 ) {
     val recorderViewModel = hiltViewModel<RecorderViewModel>()
 
     val isStarted = recorderViewModel.isStarted.collectAsState()
-    val transcript = recorderViewModel.transcript.collectAsState()
-    val response = recorderViewModel.responseMessage.collectAsState()
+    val chatMessages = recorderViewModel.chatMessages(0).collectAsState(listOf())
 
     LaunchedEffect(Unit) {
-        recorderViewModel.responseMessage.collect { message ->
-            if (message.isNotEmpty()) {
-                responseListener.emit(message)
-            }
+        withContext(Dispatchers.IO) {
+            recorderViewModel.initChat(context)
         }
     }
 
@@ -73,15 +75,12 @@ fun RecorderUI(
                         }
                     }
 
-                    Text(
-                        text = transcript.value,
-                        color = Color.White
-                    )
-
-                    Text(
-                        text = response.value,
-                        color = Color.Yellow
-                    )
+                    chatMessages.value.filter { it.role != Role.SYSTEM }.forEach { message ->
+                        Text(
+                            text = message.content,
+                            color = if (message.role == Role.BOT) Color.Yellow else Color.White
+                        )
+                    }
                 }
             }
         }

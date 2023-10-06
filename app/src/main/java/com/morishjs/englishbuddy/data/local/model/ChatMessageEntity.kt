@@ -8,4 +8,5 @@ data class ChatMessageEntity(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
     val chatId: Int,
     val content: String,
+    val role: String,
 )

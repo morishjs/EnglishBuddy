@@ -10,7 +10,10 @@ import javax.inject.Inject
 class ChatbotImpl @Inject constructor(
     private val openAI: OpenAI
 ) : Chatbot {
-    override suspend fun getResponse(str: String, chatMessageContext: List<ChatMessage>?): List<ChatMessage> {
+    override suspend fun getResponse(
+        str: String,
+        chatMessageContext: List<ChatMessage>?
+    ): ChatMessage {
         val chatMessages = ((chatMessageContext ?: listOf()) + listOf(
             ChatMessage(
                 role = ChatRole.User,
@@ -30,8 +33,7 @@ class ChatbotImpl @Inject constructor(
                 it.message
             }
             .first()
-        chatMessages.add(responseMessage)
 
-        return chatMessages.toList()
+        return responseMessage
     }
 }

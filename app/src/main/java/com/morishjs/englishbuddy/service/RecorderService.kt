@@ -9,11 +9,13 @@ import com.morishjs.englishbuddy.chatbot.Chatbot
 import com.morishjs.englishbuddy.data.ChatMessageRepository
 import com.morishjs.englishbuddy.data.RecorderRepository
 import com.morishjs.englishbuddy.domain.ChatMessage
+import com.morishjs.englishbuddy.domain.Role
 import com.morishjs.englishbuddy.speechtotext.SpeechToText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.nio.file.Path
 import java.time.LocalDateTime
@@ -55,15 +57,29 @@ class RecorderService : Service() {
                 path?.let {
                     scope.launch {
                         val s = speechToText.transcript(it)
-                        scope.launch {
-                            chatMessageRepository.saveChatMessage(ChatMessage(0, s))
-                        }
-                        val response = chatbot.getResponse(s)
 
-                        val responseMessage = response.last().content
+                        scope.launch {
+                            chatMessageRepository.saveChatMessage(
+                                ChatMessage(
+                                    0,
+                                    s,
+                                    role = Role.USER
+                                )
+                            )
+                        }
+
+                        val responseMessage = chatbot.getResponse(s).content
                         responseMessage?.let {
                             Intent(this@RecorderService, TextToSpeechService::class.java)
                                 .apply {
+                                    chatMessageRepository.saveChatMessage(
+                                        ChatMessage(
+                                            0,
+                                            it,
+                                            role = Role.BOT
+                                        )
+                                    )
+
                                     action = TextToSpeechService.ACTION_START
                                     putExtra("text", it)
                                 }.also {

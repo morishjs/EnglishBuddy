@@ -6,7 +6,7 @@ import com.morishjs.englishbuddy.data.local.dao.ChatMessageDao
 import com.morishjs.englishbuddy.data.local.model.ChatMessageEntity
 
 @Database(
-    version = 1,
+    version = 2,
     entities = [
         ChatMessageEntity::class
     ]
