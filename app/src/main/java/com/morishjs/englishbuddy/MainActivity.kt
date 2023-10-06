@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.morishjs.englishbuddy.service.TextToSpeechService
 import com.morishjs.englishbuddy.ui.main.RecorderUI
@@ -40,17 +41,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun initTextToSpeech() {
         Intent(this, TextToSpeechService::class.java)
             .apply {
                 action = TextToSpeechService.ACTION_INIT
             }
             .also { intent ->
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(intent)
-                } else {
-                    startService(intent)
-                }
+                startForegroundService(intent)
             }
     }
 

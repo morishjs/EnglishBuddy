@@ -3,6 +3,7 @@ package com.morishjs.englishbuddy.ui.main
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aallam.openai.api.audio.TranscriptionRequest
@@ -47,16 +48,12 @@ class RecorderViewModel @Inject internal constructor(
         observeRecordingStop()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun startRecording(context: Context) {
-//        path = recorderRepository.startRecording(context) ?: return
         Intent(context, RecorderService::class.java).apply {
             action = RecorderService.ACTION_START
         }.also {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(it)
-            } else {
-                context.startService(it)
-            }
+            context.startForegroundService(it)
         }
 
         _isStarted.value = true
