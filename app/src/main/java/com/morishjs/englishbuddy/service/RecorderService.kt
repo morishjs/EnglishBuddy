@@ -3,6 +3,7 @@ package com.morishjs.englishbuddy.service
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import com.morishjs.englishbuddy.chatbot.Chatbot
 import com.morishjs.englishbuddy.data.RecorderRepository
 import com.morishjs.englishbuddy.speechtotext.SpeechToText
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,6 +25,9 @@ class RecorderService : Service() {
     @Inject
     lateinit var speechToText: SpeechToText
 
+    @Inject
+    lateinit var chatbot: Chatbot
+
     var path: Path? = null
 
     companion object {
@@ -43,14 +47,18 @@ class RecorderService : Service() {
                 path?.let {
                     scope.launch {
                         val s = speechToText.transcript(it)
-
-                        Intent(this@RecorderService, TextToSpeechService::class.java)
-                            .apply {
-                                action = TextToSpeechService.ACTION_START
-                                putExtra("text", s)
-                            }.also {
-                                startService(it)
-                            }
+                        val response = chatbot.getResponse(s)
+                        
+                        val responseMessage = response.last().content
+                        responseMessage?.let {
+                            Intent(this@RecorderService, TextToSpeechService::class.java)
+                                .apply {
+                                    action = TextToSpeechService.ACTION_START
+                                    putExtra("text", it)
+                                }.also {
+                                    startService(it)
+                                }
+                        }
                     }
                 }
 

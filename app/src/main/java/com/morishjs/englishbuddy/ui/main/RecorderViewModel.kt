@@ -43,40 +43,8 @@ class RecorderViewModel @Inject internal constructor(
         )
     )
 
-    var path: Path? = null
-
     init {
         observeRecordingStop()
-//        observeTranscript()
-    }
-
-    private fun observeTranscript() {
-        viewModelScope.launch {
-            transcript.collect { text ->
-                val chatCompletionRequest = ChatCompletionRequest(
-                    model = ModelId("gpt-3.5-turbo"),
-                    n = 1,
-                    messages = chatMessages + listOf(
-                        ChatMessage(
-                            role = ChatRole.User,
-                            content = text,
-                        )
-                    )
-                )
-//
-//                val responseMessage = openAI.chatCompletion(chatCompletionRequest)
-//                    .choices
-//                    .map {
-//                        it.message
-//                    }
-//                    .first()
-//                chatMessages.add(responseMessage)
-//
-//                responseMessage.content?.let {
-//                    _responseMessage.value = it
-//                }
-            }
-        }
     }
 
     fun startRecording(context: Context) {
@@ -100,42 +68,13 @@ class RecorderViewModel @Inject internal constructor(
         }
         context.startService(intent)
 
-//        updateTranscript()
         _isStarted.value = false
-    }
-
-    private suspend fun transcript(path: Path): String {
-        val request = TranscriptionRequest(
-            audio = FileSource(
-                name = path.name,
-                source = path.source()
-            ),
-            model = ModelId("whisper-1"),
-            language = "en",
-        )
-
-//        val response = openAI.transcription(request)
-//        return response.text
-        return ""
-    }
-
-    private fun updateTranscript() {
-        path?.let {
-            viewModelScope.launch {
-//                _transcript.value = transcript(it)
-            }
-        }
     }
 
     private fun observeRecordingStop() {
         viewModelScope.launch {
             recorderRepository.isStopped.collect { stopped ->
-                if (stopped) {
-                    updateTranscript()
-                    _isStarted.value = false
-                } else {
-                    _isStarted.value = true
-                }
+                _isStarted.value = !stopped
             }
         }
     }

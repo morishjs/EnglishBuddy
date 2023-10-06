@@ -28,6 +28,10 @@
                 android:enabled="true"
                 android:exported="false"
                 />
+        <service android:name=".service.ChatbotService"
+                android:enabled="true"
+                android:exported="false"
+                />
         <activity
                 android:name=".MainActivity"
                 android:exported="true"
