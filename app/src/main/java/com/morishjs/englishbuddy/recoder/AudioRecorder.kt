@@ -6,6 +6,6 @@ import java.nio.file.Path
 
 interface AudioRecorder {
     val isStopped: StateFlow<Boolean>
-    fun stop()
-    fun start(context: Context): Path?
+    fun stop(): Path
+    fun start(context: Context)
 }

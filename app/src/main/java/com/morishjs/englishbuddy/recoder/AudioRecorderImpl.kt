@@ -29,6 +29,7 @@ class AudioRecorderImpl @Inject constructor() : AudioRecorder {
     private var lastSoundTime: Long = 0
 
     private var activeJob: Job? = null
+    private var path: Path? = null
 
     private val _isStopped = MutableStateFlow(true)
     override val isStopped: StateFlow<Boolean> get() = _isStopped
@@ -39,7 +40,7 @@ class AudioRecorderImpl @Inject constructor() : AudioRecorder {
         } else MediaRecorder()
     }
 
-    override fun start(context: Context): Path? =
+    override fun start(context: Context) {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.RECORD_AUDIO
@@ -50,8 +51,6 @@ class AudioRecorderImpl @Inject constructor() : AudioRecorder {
                 arrayOf(Manifest.permission.RECORD_AUDIO),
                 10,
             )
-
-            null
         } else {
             val tempFile = createTempFile(prefix = "tempRecording", suffix = ".mp4")
 
@@ -69,14 +68,14 @@ class AudioRecorderImpl @Inject constructor() : AudioRecorder {
 
             lastSoundTime = System.currentTimeMillis()
             activeJob = CoroutineScope(Dispatchers.Default).launch {
-                startCheckingAmplitude()
+//                startCheckingAmplitude()
             }
             _isStopped.value = false
-
-            tempFile
+            path = tempFile
         }
+    }
 
-    override fun stop() {
+    override fun stop(): Path {
         activeJob?.cancel()
         activeJob = null
 
@@ -85,6 +84,8 @@ class AudioRecorderImpl @Inject constructor() : AudioRecorder {
         recorder = null
 
         _isStopped.value = true
+
+        return path!!
     }
 
     private suspend fun startCheckingAmplitude() {

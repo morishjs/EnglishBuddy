@@ -38,58 +38,55 @@ class RecorderService : Service() {
     @Inject
     lateinit var chatMessageRepository: ChatMessageRepository
 
-    var path: Path? = null
-
     companion object {
         const val ACTION_START = "RECORD_START"
         const val ACTION_STOP = "RECORD_STOP"
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_START -> {
                 // Start recording
-                path = recorderRepository.startRecording(this)
+                recorderRepository.startRecording(this)
             }
 
             ACTION_STOP -> {
                 // Stop recording
-                path?.let {
+                val path = recorderRepository.stopRecording()
+
+                scope.launch {
+                    val s = speechToText.transcript(path)
+
                     scope.launch {
-                        val s = speechToText.transcript(it)
-
-                        scope.launch {
-                            chatMessageRepository.saveChatMessage(
-                                ChatMessage(
-                                    0,
-                                    s,
-                                    role = Role.USER
-                                )
+                        chatMessageRepository.saveChatMessage(
+                            ChatMessage(
+                                0,
+                                s,
+                                role = Role.USER
                             )
-                        }
+                        )
+                    }
 
-                        val responseMessage = chatbot.getResponse(s).content
-                        responseMessage?.let {
-                            Intent(this@RecorderService, TextToSpeechService::class.java)
-                                .apply {
-                                    chatMessageRepository.saveChatMessage(
-                                        ChatMessage(
-                                            0,
-                                            it,
-                                            role = Role.BOT
-                                        )
+                    val responseMessage = chatbot.getResponse(s).content
+                    responseMessage?.let {
+                        Intent(this@RecorderService, TextToSpeechService::class.java)
+                            .apply {
+                                chatMessageRepository.saveChatMessage(
+                                    ChatMessage(
+                                        0,
+                                        it,
+                                        role = Role.BOT
                                     )
+                                )
 
-                                    action = TextToSpeechService.ACTION_START
-                                    putExtra("text", it)
-                                }.also {
-                                    startService(it)
-                                }
-                        }
+                                action = TextToSpeechService.ACTION_START
+                                putExtra("text", it)
+                            }.also {
+                                startForegroundService(it)
+                            }
                     }
                 }
-
-                recorderRepository.stopRecording()
             }
         }
         return START_NOT_STICKY
