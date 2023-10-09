@@ -9,6 +9,7 @@ import android.media.MediaRecorder
 import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import com.morishjs.englishbuddy.domain.Recorder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,9 +25,6 @@ import kotlin.io.path.createTempFile
 
 class AudioRecorderImpl @Inject constructor() : AudioRecorder {
     private var recorder: MediaRecorder? = null
-    private val silenceThreshold = 500  // This value depends on your need, might need adjustment
-    private val silenceDuration = 4000L   // 4 seconds of silence
-    private var lastSoundTime: Long = 0
 
     private var activeJob: Job? = null
     private var path: Path? = null
@@ -40,7 +38,7 @@ class AudioRecorderImpl @Inject constructor() : AudioRecorder {
         } else MediaRecorder()
     }
 
-    override fun start(context: Context) {
+    override fun start(context: Context): Recorder? {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.RECORD_AUDIO
@@ -51,6 +49,8 @@ class AudioRecorderImpl @Inject constructor() : AudioRecorder {
                 arrayOf(Manifest.permission.RECORD_AUDIO),
                 10,
             )
+
+            return null
         } else {
             val tempFile = createTempFile(prefix = "tempRecording", suffix = ".mp4")
 
@@ -66,12 +66,15 @@ class AudioRecorderImpl @Inject constructor() : AudioRecorder {
                 recorder = this
             }
 
-            lastSoundTime = System.currentTimeMillis()
             activeJob = CoroutineScope(Dispatchers.Default).launch {
 //                startCheckingAmplitude()
             }
             _isStopped.value = false
             path = tempFile
+
+            return recorder?.let {
+                Recorder(it)
+            }
         }
     }
 
@@ -86,24 +89,5 @@ class AudioRecorderImpl @Inject constructor() : AudioRecorder {
         _isStopped.value = true
 
         return path!!
-    }
-
-    private suspend fun startCheckingAmplitude() {
-        while (activeJob?.isActive == true) {
-            delay(100)
-
-            Log.d("AudioRecorder", "Amplitude: ${recorder?.maxAmplitude ?: 0}")
-
-            if ((recorder?.maxAmplitude ?: 0) > silenceThreshold) {
-                lastSoundTime = System.currentTimeMillis()
-            }
-
-            if (System.currentTimeMillis() - lastSoundTime > silenceDuration) {
-                withContext(Dispatchers.Main) {
-                    stop()
-                }
-                break
-            }
-        }
     }
 }

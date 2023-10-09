@@ -38,11 +38,12 @@ class RecorderViewModel @Inject internal constructor(
         _isStarted.value = true
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun stopRecording(context: Context) {
         val intent = Intent(context, RecorderService::class.java).apply {
             action = RecorderService.ACTION_STOP
         }
-        context.startService(intent)
+        context.startForegroundService(intent)
 
         _isStarted.value = false
     }
