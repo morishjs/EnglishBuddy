@@ -1,24 +1,16 @@
 package com.morishjs.englishbuddy.ui.main
 
-import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -37,14 +29,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.morishjs.englishbuddy.domain.Role
-import com.morishjs.englishbuddy.manager.TTSManager
 import com.morishjs.englishbuddy.ui.Center
-import com.morishjs.englishbuddy.ui.theme.EnglishBuddyTheme
+import com.morishjs.englishbuddy.ui.theme.AppTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RecorderUI() {
     val recorderViewModel = hiltViewModel<RecorderViewModel>()
@@ -74,17 +64,16 @@ fun RecorderUI() {
             }
     }
 
-    EnglishBuddyTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background,
-        ) {
-            Center {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+    ) {
+        Center {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
 
 //                    Surface(
 //                        modifier = Modifier.size(64.dp),
@@ -104,41 +93,41 @@ fun RecorderUI() {
 ////                            )
 //                        }
 //                    }
-                    ActionRow()
+                ActionRow()
 
-                    if (isLoading) {
-                        Text(
-                            text = "Loading...",
-                            color = Color.White,
-                        )
-                    } else {
-                        LazyColumn(
-                            state = listState,
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            items(chatMessages.value.filter { it.role != Role.SYSTEM }) { message ->
-                                Row(
-                                    Modifier.fillMaxWidth(),
-                                    horizontalArrangement = if (message.role == Role.BOT) Arrangement.Start else Arrangement.End,
+                if (isLoading) {
+                    Text(
+                        text = "Loading...",
+                        color = Color.White,
+                    )
+                } else {
+                    LazyColumn(
+                        state = listState,
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        items(chatMessages.value.filter { it.role != Role.SYSTEM }) { message ->
+                            Row(
+                                Modifier.fillMaxWidth(),
+                                horizontalArrangement = if (message.role == Role.BOT) Arrangement.Start else Arrangement.End,
+                            ) {
+                                Surface(
+                                    color = Color.White,
+                                    shape = RoundedCornerShape(16.dp),
+                                    modifier = if (message.role == Role.BOT) Modifier.padding(
+                                        start = 4.dp,
+                                        end = 60.dp
+                                    ) else Modifier.padding(start = 60.dp, end = 4.dp)
                                 ) {
-                                    Surface(
-                                        color = Color.White,
-                                        shape = RoundedCornerShape(16.dp),
-                                        modifier = if (message.role == Role.BOT) Modifier.padding(
-                                            start = 4.dp,
-                                            end = 60.dp
-                                        ) else Modifier.padding(start = 60.dp, end = 4.dp)
-                                    ) {
-                                        Text(
-                                            text = message.content,
-                                            color = Color.Black,
-                                            modifier = Modifier.padding(16.dp)
-                                        )
-                                    }
+                                    Text(
+                                        text = message.content,
+                                        color = Color.Black,
+                                        modifier = Modifier.padding(16.dp)
+                                    )
                                 }
                             }
                         }
                     }
+                }
 
 //                    Surface(
 //                        modifier = Modifier.size(64.dp),
@@ -146,7 +135,6 @@ fun RecorderUI() {
 //                        color = if (isStarted.value) Color.Red else Color.Green,
 //                    ) {
 //                    }
-                }
             }
         }
     }

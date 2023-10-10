@@ -10,7 +10,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import androidx.navigation.compose.rememberNavController
+import com.morishjs.englishbuddy.ui.graph.Graph
 import com.morishjs.englishbuddy.ui.main.RecorderUI
+import com.morishjs.englishbuddy.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,7 +34,11 @@ class MainActivity : ComponentActivity() {
         requestPermission()
 
         setContent {
-            RecorderUI()
+            val navController = rememberNavController()
+
+            AppTheme {
+                Graph(navController)
+            }
         }
     }
 

@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "com.morishjs.englishbuddy"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.morishjs.englishbuddy"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -54,6 +54,7 @@ android {
 
 val ktor_version = "2.3.4"
 val room_version = "2.5.2"
+val nav_version = "2.7.4"
 
 dependencies {
     implementation("com.google.devtools.ksp:symbol-processing-api:1.9.10-1.0.13")
@@ -82,6 +83,9 @@ dependencies {
     // HTTP
     implementation("io.ktor:ktor-client-android:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
+
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:$nav_version")
 
 //    Hilt
     implementation("com.google.dagger:hilt-android:2.44")
