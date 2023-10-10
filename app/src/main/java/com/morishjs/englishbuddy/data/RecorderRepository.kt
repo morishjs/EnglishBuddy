@@ -6,6 +6,6 @@ import com.morishjs.englishbuddy.domain.Recorder
 import java.nio.file.Path
 
 interface RecorderRepository {
-    fun startRecording(context: Context): Recorder?
+    fun startRecording(): Recorder?
     fun stopRecording(): Path
 }

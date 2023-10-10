@@ -20,14 +20,6 @@
                 android:exported="false"
                 android:label="@string/title_activity_center"
                 android:theme="@style/Theme.EnglishBuddy" />
-        <service android:name=".service.RecorderService"
-                android:enabled="true"
-                android:exported="false"
-                />
-        <service android:name=".service.TextToSpeechService"
-                android:enabled="true"
-                android:exported="false"
-                />
         <activity
                 android:name=".MainActivity"
                 android:exported="true"

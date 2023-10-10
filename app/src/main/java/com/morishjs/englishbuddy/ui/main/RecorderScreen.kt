@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.morishjs.englishbuddy.domain.Role
+import com.morishjs.englishbuddy.manager.TTSManager
 import com.morishjs.englishbuddy.ui.Center
 import com.morishjs.englishbuddy.ui.theme.EnglishBuddyTheme
 import kotlinx.coroutines.Dispatchers
@@ -38,9 +39,7 @@ import kotlinx.coroutines.withContext
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun RecorderUI(
-    context: Context,
-) {
+fun RecorderUI() {
     val recorderViewModel = hiltViewModel<RecorderViewModel>()
 
     val listState = rememberLazyListState()
@@ -52,7 +51,7 @@ fun RecorderUI(
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
-            recorderViewModel.initChat(context)
+            recorderViewModel.initChat()
         }
     }
 
@@ -86,9 +85,9 @@ fun RecorderUI(
                     ) {
                         Center(modifier = Modifier.clickable {
                             if (isStarted.value) {
-                                recorderViewModel.stopRecording(context)
+                                recorderViewModel.stopRecording()
                             } else {
-                                recorderViewModel.startRecording(context)
+                                recorderViewModel.startRecording()
                             }
                         }) {
                             Text(
