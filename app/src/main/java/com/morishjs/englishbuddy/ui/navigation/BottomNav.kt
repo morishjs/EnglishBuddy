@@ -1,7 +1,6 @@
 package com.morishjs.englishbuddy.ui.navigation
 
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -22,7 +21,7 @@ fun BottomNav(navController: NavController) {
         backgroundColor = Color(240, 240, 240),
         elevation = 0.dp
     ) {
-        listOf(Screen.ChatList, Screen.Settings).forEach {
+        listOf(Screen.ChatRooms, Screen.Settings).forEach {
             BottomNavigationItem(
                 icon = {
                     it.icon?.let {

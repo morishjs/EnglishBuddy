@@ -1,12 +1,10 @@
-package com.morishjs.englishbuddy.ui.main
+package com.morishjs.englishbuddy.ui.chat_screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -29,7 +27,7 @@ fun ActionRow(navController: NavController) {
         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
     )
     {
-        listOf(Screen.ChatList, Screen.Settings).forEach { item ->
+        listOf(Screen.ChatRooms, Screen.Settings).forEach { item ->
             ActionButton(icon = item.icon!!)
         }
     }

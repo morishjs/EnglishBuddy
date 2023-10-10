@@ -14,7 +14,7 @@ class ChatMessageRepositoryImpl @Inject constructor(
     override fun saveChatMessage(message: ChatMessage) {
         chatMessageDataSource.addChatMessage(
             ChatMessageEntity(
-                chatId = message.chatId,
+                chatRoomId = message.chatRoomId,
                 content = message.content,
                 role = message.role.value
             )
@@ -29,7 +29,7 @@ class ChatMessageRepositoryImpl @Inject constructor(
         chatMessageDataSource.getChatMessages(chatId).map {
             it.map { chatMessageEntity ->
                 ChatMessage(
-                    chatId = chatMessageEntity.chatId,
+                    chatRoomId = chatMessageEntity.chatRoomId,
                     content = chatMessageEntity.content,
                     role = Role(chatMessageEntity.role)
                 )

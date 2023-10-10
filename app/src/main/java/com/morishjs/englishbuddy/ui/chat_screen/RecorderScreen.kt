@@ -1,4 +1,4 @@
-package com.morishjs.englishbuddy.ui.main
+package com.morishjs.englishbuddy.ui.chat_screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.PlayArrow
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -37,14 +35,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.morishjs.englishbuddy.domain.Role
 import com.morishjs.englishbuddy.ui.Center
-import com.morishjs.englishbuddy.ui.navigation.BottomNav
 import com.morishjs.englishbuddy.ui.theme.Black
 import com.morishjs.englishbuddy.ui.theme.Yellow
 import kotlinx.coroutines.Dispatchers

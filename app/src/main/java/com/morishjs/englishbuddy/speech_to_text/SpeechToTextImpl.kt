@@ -1,4 +1,4 @@
-package com.morishjs.englishbuddy.speechtotext
+package com.morishjs.englishbuddy.speech_to_text
 
 import com.aallam.openai.api.audio.TranscriptionRequest
 import com.aallam.openai.api.file.FileSource

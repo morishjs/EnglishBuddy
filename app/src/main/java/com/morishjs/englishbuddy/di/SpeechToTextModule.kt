@@ -1,7 +1,7 @@
 package com.morishjs.englishbuddy.di
 
-import com.morishjs.englishbuddy.speechtotext.SpeechToText
-import com.morishjs.englishbuddy.speechtotext.SpeechToTextImpl
+import com.morishjs.englishbuddy.speech_to_text.SpeechToText
+import com.morishjs.englishbuddy.speech_to_text.SpeechToTextImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

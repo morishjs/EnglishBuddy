@@ -8,12 +8,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ChatMessageDao {
-    @Query("SELECT * FROM chat_message WHERE chatId = :chatId ORDER BY id ASC")
-    fun getChatMessages(chatId: Int): Flow<List<ChatMessageEntity>>
+    @Query("SELECT * FROM chat_message WHERE chatRoomId = :chatRoomId ORDER BY id ASC")
+    fun getChatMessages(chatRoomId: Int): Flow<List<ChatMessageEntity>>
 
     @Insert
     fun addChatMessage(chatMessage: ChatMessageEntity)
 
-    @Query("SELECT EXISTS(SELECT * FROM chat_message WHERE chatId = :chatId)")
-    fun hasMessages(chatId: Int): Boolean
+    @Query("SELECT EXISTS(SELECT * FROM chat_message WHERE chatRoomId = :chatRoomId)")
+    fun hasMessages(chatRoomId: Int): Boolean
 }

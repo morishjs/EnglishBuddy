@@ -26,4 +26,8 @@ object DBModule {
     @Provides
     @Singleton
     fun bindChatMessageDao(appDatabase: Database) = appDatabase.getChatMessageDao()
+
+    @Provides
+    @Singleton
+    fun bindChatRoomDao(appDatabase: Database) = appDatabase.getChatRoomDao()
 }

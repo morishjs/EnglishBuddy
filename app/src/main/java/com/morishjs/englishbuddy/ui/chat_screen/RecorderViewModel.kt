@@ -1,4 +1,4 @@
-package com.morishjs.englishbuddy.ui.main
+package com.morishjs.englishbuddy.ui.chat_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,7 +8,7 @@ import com.morishjs.englishbuddy.data.RecorderRepository
 import com.morishjs.englishbuddy.domain.ChatMessage
 import com.morishjs.englishbuddy.domain.Role
 import com.morishjs.englishbuddy.manager.TTSManager
-import com.morishjs.englishbuddy.speechtotext.SpeechToText
+import com.morishjs.englishbuddy.speech_to_text.SpeechToText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
