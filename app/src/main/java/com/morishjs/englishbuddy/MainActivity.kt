@@ -11,8 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
-import com.morishjs.englishbuddy.ui.graph.Graph
-import com.morishjs.englishbuddy.ui.main.RecorderUI
+import com.morishjs.englishbuddy.ui.navigation.Graph
 import com.morishjs.englishbuddy.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -1,4 +1,4 @@
-package com.morishjs.englishbuddy.ui.graph
+package com.morishjs.englishbuddy.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -10,9 +10,9 @@ import com.morishjs.englishbuddy.ui.main.RecorderUI
 fun Graph(
     navHostController: NavHostController
 ) {
-    NavHost(navController = navHostController, startDestination = Route.Home) {
-        composable(route = Route.Home) {
-            RecorderUI()
+    NavHost(navController = navHostController, startDestination = Screen.Chat.route!!) {
+        composable(route = Screen.Chat.route) {
+            RecorderUI(navHostController)
         }
     }
 }

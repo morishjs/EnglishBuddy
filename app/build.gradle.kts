@@ -6,6 +6,12 @@ plugins {
     id("com.google.dagger.hilt.android")
 }
 
+
+val ktor_version = "2.3.4"
+val room_version = "2.5.2"
+val nav_version = "2.7.4"
+val kotlin_ext_version = "1.4.3"
+
 android {
     namespace = "com.morishjs.englishbuddy"
     compileSdk = 34
@@ -43,7 +49,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = kotlin_ext_version
     }
     packaging {
         resources {
@@ -51,10 +57,6 @@ android {
         }
     }
 }
-
-val ktor_version = "2.3.4"
-val room_version = "2.5.2"
-val nav_version = "2.7.4"
 
 dependencies {
     implementation("com.google.devtools.ksp:symbol-processing-api:1.9.10-1.0.13")
@@ -86,6 +88,7 @@ dependencies {
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:$nav_version")
+    implementation("androidx.compose.material:material:$kotlin_ext_version")
 
 //    Hilt
     implementation("com.google.dagger:hilt-android:2.44")
