@@ -1,8 +1,10 @@
 package com.morishjs.englishbuddy.data.local.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import com.morishjs.englishbuddy.data.local.model.ChatRoomEntity
 import com.morishjs.englishbuddy.data.local.model.ChatRoomWithMessages
 import kotlinx.coroutines.flow.Flow
 
@@ -11,4 +13,7 @@ interface ChatRoomDao {
     @Transaction
     @Query("SELECT * FROM chat_room ORDER BY createdAt DESC")
     fun getChatRoomList(): Flow<List<ChatRoomWithMessages>>
+
+    @Insert
+    suspend fun createChatRoom(chatRoom: ChatRoomEntity): Long
 }

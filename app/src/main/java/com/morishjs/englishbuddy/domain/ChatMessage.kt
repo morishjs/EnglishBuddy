@@ -10,7 +10,7 @@ value class Role(val value: String) {
 }
 
 data class ChatMessage(
-    val chatRoomId: Int,
+    val chatRoomId: Long,
     val content: String,
     val role: Role
 )

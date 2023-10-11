@@ -50,7 +50,7 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun RecorderUI(navController: NavController) {
+fun RecorderUI(navController: NavController, id: Long) {
     val recorderViewModel = hiltViewModel<RecorderViewModel>()
 
     val listState = rememberLazyListState()
@@ -58,11 +58,11 @@ fun RecorderUI(navController: NavController) {
     var isLoading by remember { mutableStateOf(true) }
 
     val isStarted = recorderViewModel.isStarted.collectAsState()
-    val chatMessages = recorderViewModel.chatMessages(0).collectAsState(listOf())
+    val chatMessages = recorderViewModel.chatMessages(id).collectAsState(listOf())
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
-            recorderViewModel.initChat()
+            recorderViewModel.initChat(id)
         }
     }
 
@@ -85,7 +85,7 @@ fun RecorderUI(navController: NavController) {
                 shape = CircleShape,
                 onClick = {
                     if (isStarted.value) {
-                        recorderViewModel.stopRecording()
+                        recorderViewModel.stopRecording(id)
                     } else {
                         recorderViewModel.startRecording()
                     }

@@ -2,7 +2,9 @@ package com.morishjs.englishbuddy.data
 
 import android.annotation.SuppressLint
 import com.morishjs.englishbuddy.data.local.dao.ChatRoomDao
+import com.morishjs.englishbuddy.data.local.model.ChatRoomEntity
 import com.morishjs.englishbuddy.domain.ChatMessage
+import com.morishjs.englishbuddy.domain.ChatRoom
 import com.morishjs.englishbuddy.domain.ChatRoomWithMessage
 import com.morishjs.englishbuddy.domain.Role
 import kotlinx.coroutines.flow.map
@@ -29,5 +31,13 @@ class ChatRoomRepositoryImpl @Inject constructor(
                 ),
             )
         }
+    }
+
+    override suspend fun createChatRoom(): Long {
+        return chatRoomDataSource.createChatRoom(
+            ChatRoomEntity(
+                createdAt = System.currentTimeMillis()
+            )
+        )
     }
 }

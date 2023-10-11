@@ -27,12 +27,13 @@ class RecorderViewModel @Inject internal constructor(
     private val _isStarted = MutableStateFlow(false)
     val isStarted: MutableStateFlow<Boolean> = _isStarted
 
+
     fun startRecording() {
         recorderRepository.startRecording()
         _isStarted.value = true
     }
 
-    fun stopRecording() {
+    fun stopRecording(chatRoomId: Long) {
         val path = recorderRepository.stopRecording()
 
         viewModelScope.launch {
@@ -41,7 +42,7 @@ class RecorderViewModel @Inject internal constructor(
 
                 chatMessageRepository.saveChatMessage(
                     ChatMessage(
-                        0,
+                        chatRoomId,
                         s,
                         role = Role.USER
                     )
@@ -53,7 +54,7 @@ class RecorderViewModel @Inject internal constructor(
 
                     chatMessageRepository.saveChatMessage(
                         ChatMessage(
-                            0,
+                            chatRoomId,
                             it,
                             role = Role.BOT
                         )
@@ -65,10 +66,11 @@ class RecorderViewModel @Inject internal constructor(
         _isStarted.value = false
     }
 
-    fun chatMessages(chatId: Int) = chatMessageRepository.getChatMessages(chatId)
+    fun chatMessages(chatId: Long) = chatMessageRepository.getChatMessages(chatId)
 
-    fun initChat() {
-        val hasMessages = chatMessageRepository.hasMessages(0)
+    fun initChat(chatRoomId: Long) {
+        val hasMessages = chatMessageRepository.hasMessages(chatRoomId)
+
         if (!hasMessages) {
             viewModelScope.launch {
                 val message = chatbot.getResponse(
@@ -79,7 +81,7 @@ class RecorderViewModel @Inject internal constructor(
                     withContext(Dispatchers.IO) {
                         chatMessageRepository.saveChatMessage(
                             ChatMessage(
-                                0,
+                                chatRoomId,
                                 content,
                                 role = Role.SYSTEM
                             )
