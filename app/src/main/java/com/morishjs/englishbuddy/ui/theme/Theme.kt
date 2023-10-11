@@ -15,7 +15,7 @@ private val ColorScheme = darkColorScheme(
     primary = Color(248, 224, 109),
     secondary = PurpleGrey80,
     tertiary = Pink80,
-    background = Color(248, 224, 109)
+    background = Color(250, 250, 250)
 )
 
 @Composable

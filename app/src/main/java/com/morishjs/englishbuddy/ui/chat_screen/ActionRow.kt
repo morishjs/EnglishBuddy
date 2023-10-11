@@ -27,19 +27,20 @@ fun ActionRow(navController: NavController) {
         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
     )
     {
-        listOf(Screen.ChatRooms, Screen.Settings).forEach { item ->
-            ActionButton(icon = item.icon!!)
+        ActionButton(icon = Screen.ChatRooms.icon!!) {
+            navController.navigate(Screen.ChatRooms.route!!)
         }
     }
 }
 
 @Composable
-fun ActionButton(icon: ImageVector) {
+fun ActionButton(icon: ImageVector, onClick: () -> Unit) {
     Button(
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(240, 240, 240)
         ),
-        onClick = { /* Handle button click here */ }) {
+        onClick = onClick
+    ) {
         Icon(icon, tint = Black, contentDescription = "", modifier = Modifier.size(24.dp))
     }
 }

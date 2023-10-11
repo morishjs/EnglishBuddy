@@ -108,7 +108,7 @@ fun RecorderUI(navController: NavController, id: Long) {
     ) {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background,
+            color = MaterialTheme.colorScheme.primary,
         ) {
             Center {
                 Column(
