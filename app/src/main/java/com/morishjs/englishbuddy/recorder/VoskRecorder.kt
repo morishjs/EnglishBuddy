@@ -1,4 +1,4 @@
-package com.morishjs.englishbuddy.manager
+package com.morishjs.englishbuddy.recorder
 
 import android.content.Context
 import android.util.Log
@@ -6,11 +6,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import org.vosk.LibVosk
 import org.vosk.LogLevel
@@ -21,8 +18,7 @@ import org.vosk.android.SpeechService
 import org.vosk.android.StorageService
 import java.io.IOException
 
-
-class STTManager(private val context: Context) : RecognitionListener {
+class VoskRecorder(private val context: Context) : RecognitionListener, AudioRecorder {
     private var job = SupervisorJob()
     private val scope = CoroutineScope(job + Dispatchers.IO)
 
@@ -34,7 +30,7 @@ class STTManager(private val context: Context) : RecognitionListener {
 
     private val _transcription =
         MutableSharedFlow<String>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
-    val transcription = _transcription.asSharedFlow()
+    override val transcription = _transcription.asSharedFlow()
 
     private var model: Model? = null
     private var speechService: SpeechService? = null
@@ -55,13 +51,11 @@ class STTManager(private val context: Context) : RecognitionListener {
             })
     }
 
-    fun start() {
+    override fun startRecording() {
         if (speechService != null) {
-//            setUiState(STATE_DONE)
             speechService!!.stop()
             speechService = null
         } else {
-//            setUiState(STATE_MIC)
             try {
                 val rec = Recognizer(model, 16000.0f)
                 speechService = SpeechService(rec, 16000.0f)
@@ -72,23 +66,14 @@ class STTManager(private val context: Context) : RecognitionListener {
         }
     }
 
-    fun stop() {
+    override fun stopRecording() {
         if (speechService != null) {
             speechService!!.stop()
             speechService = null
         }
     }
 
-    fun destroy() {
-        stop()
-        job.cancel()
-    }
-
-    override fun onPartialResult(hypothesis: String?) {
-        hypothesis?.let {
-            Log.d("STTManager", it)
-        }
-    }
+    override fun onPartialResult(hypothesis: String?) {}
 
     override fun onResult(hypothesis: String?) {
 //        hypothesis?.let {

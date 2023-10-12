@@ -7,14 +7,11 @@ import com.morishjs.englishbuddy.data.ChatMessageRepository
 import com.morishjs.englishbuddy.data.RecorderRepository
 import com.morishjs.englishbuddy.domain.ChatMessage
 import com.morishjs.englishbuddy.domain.Role
-import com.morishjs.englishbuddy.manager.STTManager
 import com.morishjs.englishbuddy.manager.TTSManager
-import com.morishjs.englishbuddy.speech_to_text.SpeechToText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,24 +19,22 @@ class RecorderViewModel @Inject internal constructor(
     private val chatMessageRepository: ChatMessageRepository,
     private val chatbot: Chatbot,
     private val recorderRepository: RecorderRepository,
-//    private val speechToText: SpeechToText,
     private val ttsManager: TTSManager,
-    private val sttManager: STTManager,
 ) : ViewModel() {
     private val _isStarted = MutableStateFlow(false)
     val isStarted: MutableStateFlow<Boolean> = _isStarted
 
     fun startRecording() {
-        sttManager.start()
+        recorderRepository.startRecording()
         _isStarted.value = true
     }
 
-    fun stopRecording(chatRoomId: Long) {
-        sttManager.stop()
+    fun stopRecording() {
+        recorderRepository.stopRecording()
         _isStarted.value = false
     }
 
-    fun chatMessages(chatId: Long) = chatMessageRepository.getChatMessages(chatId)
+    fun chatMessages(chatRoomId: Long) = chatMessageRepository.getChatMessages(chatRoomId)
 
     fun initChat(chatRoomId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -65,7 +60,7 @@ class RecorderViewModel @Inject internal constructor(
     }
 
     private suspend fun observeUserSpeak(chatRoomId: Long) {
-        sttManager.transcription.collect {
+        recorderRepository.transcription.collect {
             chatMessageRepository.saveChatMessage(
                 ChatMessage(
                     chatRoomId,

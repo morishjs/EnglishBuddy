@@ -85,7 +85,7 @@ fun RecorderUI(navController: NavController, id: Long) {
                 shape = CircleShape,
                 onClick = {
                     if (isStarted.value) {
-                        recorderViewModel.stopRecording(id)
+                        recorderViewModel.stopRecording()
                     } else {
                         recorderViewModel.startRecording()
                     }

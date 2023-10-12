@@ -1,18 +1,17 @@
 package com.morishjs.englishbuddy.data
 
-import android.content.Context
-import com.morishjs.englishbuddy.recoder.AudioRecorder
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.morishjs.englishbuddy.annotations.RecorderVoskClient
+import com.morishjs.englishbuddy.recorder.AudioRecorder
 import javax.inject.Inject
 
 class RecorderRepositoryImpl @Inject internal constructor(
-    private val recorder: AudioRecorder,
-    @ApplicationContext private val context: Context
-): RecorderRepository {
+    @RecorderVoskClient private val recorder: AudioRecorder,
+) : RecorderRepository {
+    override val transcription = recorder.transcription
+
     override fun startRecording() =
-        recorder.start(context)
+        recorder.startRecording()
 
-
-    override fun stopRecording() = recorder.stop()
+    override fun stopRecording() = recorder.stopRecording()
 
 }

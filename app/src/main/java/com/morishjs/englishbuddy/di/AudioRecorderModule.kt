@@ -1,18 +1,25 @@
 package com.morishjs.englishbuddy.di
 
-import com.morishjs.englishbuddy.recoder.AudioRecorder
-import com.morishjs.englishbuddy.recoder.AudioRecorderImpl
-import dagger.Binds
+import android.content.Context
+import com.morishjs.englishbuddy.annotations.RecorderVoskClient
+import com.morishjs.englishbuddy.recorder.AudioRecorder
+import com.morishjs.englishbuddy.recorder.VoskRecorder
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class AudioRecorderModule {
-
-    @Binds
-    abstract fun bindAnalyticsService(
-        analyticsServiceImpl: AudioRecorderImpl
-    ): AudioRecorder
+object AudioRecorderModule {
+    @Provides
+    @RecorderVoskClient
+    fun bindVoskRecorder(
+        @ApplicationContext context: Context,
+    ): AudioRecorder {
+        return VoskRecorder(context).apply {
+            initialize()
+        }
+    }
 }
