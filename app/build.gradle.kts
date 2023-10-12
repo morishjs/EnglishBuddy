@@ -1,3 +1,7 @@
+import java.util.Properties
+import java.io.FileInputStream
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     kotlin("kapt")
 
@@ -6,6 +10,10 @@ plugins {
     id("com.google.dagger.hilt.android")
 }
 
+
+fun getApiKey(propertyKey: String): String {
+    return gradleLocalProperties(rootDir).getProperty(propertyKey)
+}
 
 val ktor_version = "2.3.4"
 val room_version = "2.5.2"
@@ -16,6 +24,10 @@ android {
     namespace = "com.morishjs.englishbuddy"
     compileSdk = 34
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.morishjs.englishbuddy"
         minSdk = 24
@@ -24,6 +36,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "OPENAI_API_KEY", getApiKey("OPENAI_API_KEY"))
         vectorDrawables {
             useSupportLibrary = true
         }
