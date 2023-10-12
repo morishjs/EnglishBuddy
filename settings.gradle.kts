@@ -14,4 +14,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "EnglishBuddy"
-include(":app")
+include(":app", ":models")

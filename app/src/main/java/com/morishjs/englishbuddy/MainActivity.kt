@@ -27,7 +27,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestPermission()
@@ -55,6 +54,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+
         textToSpeech.stop()
         textToSpeech.shutdown()
     }
