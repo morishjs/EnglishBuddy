@@ -1,5 +1,8 @@
 # EnglishBuddy
 
+## Description
+This is a simple English learning app. It is a mobile application that allows users to talk with ai and learn English.
+
 ## Installation
 Clone this repository and import into **Android Studio**
 ```bash
@@ -14,11 +17,6 @@ git clone https://github.com/morishjs/EnglishBuddy.git
 ```
 OPENAI_API_KEY=<YOUR_API_KEY>
 ```
-
-
-## Description
-This is a simple English learning app. It is a mobile application that allows users to talk with ai and learn English.
-
 ## Features
 - [x] User can talk with ai
 - [x] User can learn English
