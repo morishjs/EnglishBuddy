@@ -49,8 +49,7 @@ class RecorderViewModel @Inject internal constructor(
 
                 val responseMessage = chatbot.getResponse(s).content
                 responseMessage?.let {
-                    ttsManager.speak(responseMessage)
-
+//                    ttsManager.speak(responseMessage)
                     chatMessageRepository.saveChatMessage(
                         ChatMessage(
                             chatRoomId,

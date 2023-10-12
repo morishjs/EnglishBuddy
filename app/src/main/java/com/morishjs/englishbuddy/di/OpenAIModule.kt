@@ -18,7 +18,7 @@ object OpenAIModule {
     @Singleton
     fun bindOpenAI(): OpenAI {
         return OpenAI(
-            token = "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",
+            token = "<INSERT-YOUR-OPEN-AI-API>",
             timeout = Timeout(socket = 60.seconds),
         )
     }

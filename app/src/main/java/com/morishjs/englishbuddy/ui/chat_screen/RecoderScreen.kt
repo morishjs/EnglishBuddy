@@ -128,7 +128,7 @@ fun RecorderUI(navController: NavController, id: Long) {
                             modifier = Modifier
                                 .weight(1f)
                         ) {
-                            items(chatMessages.value.filter { it.role != Role.SYSTEM }) { message ->
+                            items(chatMessages.value) { message ->
                                 Row(
                                     Modifier.fillMaxWidth(),
                                     horizontalArrangement = if (message.role == Role.BOT) Arrangement.Start else Arrangement.End,
