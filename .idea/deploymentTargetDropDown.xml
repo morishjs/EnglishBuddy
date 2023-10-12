@@ -6,12 +6,12 @@
         <type value="RUNNING_DEVICE_TARGET" />
         <deviceKey>
           <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="$USER_HOME$/.android/avd/s22_API_33.avd" />
+            <type value="SERIAL_NUMBER" />
+            <value value="R59MC0288MP" />
           </Key>
         </deviceKey>
       </Target>
     </runningDeviceTargetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2023-10-12T03:13:16.389473Z" />
+    <timeTargetWasSelectedWithDropDown value="2023-10-12T07:05:23.015555Z" />
   </component>
 </project>

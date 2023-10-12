@@ -1,10 +1,11 @@
 package com.morishjs.englishbuddy.recorder
 
-import kotlinx.coroutines.flow.SharedFlow
+import android.content.Context
+import kotlinx.coroutines.flow.StateFlow
+import java.nio.file.Path
 
 interface AudioRecorder {
-    fun startRecording()
-    fun stopRecording()
-
-    val transcription: SharedFlow<String>
+    val isStopped: StateFlow<Boolean>
+    fun stop(): Path
+    fun start(context: Context)
 }

@@ -4,42 +4,72 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.morishjs.englishbuddy.chatbot.Chatbot
 import com.morishjs.englishbuddy.data.ChatMessageRepository
-import com.morishjs.englishbuddy.data.RecorderRepository
+import com.morishjs.englishbuddy.recorder.Recorder
 import com.morishjs.englishbuddy.domain.ChatMessage
 import com.morishjs.englishbuddy.domain.Role
 import com.morishjs.englishbuddy.manager.TTSManager
+import com.morishjs.englishbuddy.speech_to_text.SpeechToText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class RecorderViewModel @Inject internal constructor(
     private val chatMessageRepository: ChatMessageRepository,
     private val chatbot: Chatbot,
-    private val recorderRepository: RecorderRepository,
+    private val recorder: Recorder,
+    private val speechToText: SpeechToText,
     private val ttsManager: TTSManager,
 ) : ViewModel() {
     private val _isStarted = MutableStateFlow(false)
     val isStarted: MutableStateFlow<Boolean> = _isStarted
 
     fun startRecording() {
-        recorderRepository.startRecording()
+        recorder.startRecording()
         _isStarted.value = true
     }
 
-    fun stopRecording() {
-        recorderRepository.stopRecording()
+    fun stopRecording(chatRoomId: Long) {
+        val path = recorder.stopRecording()
+
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val s = speechToText.transcript(path)
+
+                chatMessageRepository.saveChatMessage(
+                    ChatMessage(
+                        chatRoomId,
+                        s,
+                        role = Role.USER
+                    )
+                )
+
+                val responseMessage = chatbot.getResponse(s).content
+                responseMessage?.let {
+                    ttsManager.speak(responseMessage)
+
+                    chatMessageRepository.saveChatMessage(
+                        ChatMessage(
+                            chatRoomId,
+                            it,
+                            role = Role.BOT
+                        )
+                    )
+                }
+            }
+        }
+
         _isStarted.value = false
     }
+
 
     fun chatMessages(chatRoomId: Long) = chatMessageRepository.getChatMessages(chatRoomId)
 
     fun initChat(chatRoomId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            observeUserSpeak(chatRoomId)
-
             val hasMessages = chatMessageRepository.hasMessages(chatRoomId)
             if (!hasMessages) {
                 val message = chatbot.getResponse(
@@ -58,29 +88,4 @@ class RecorderViewModel @Inject internal constructor(
             }
         }
     }
-
-    private suspend fun observeUserSpeak(chatRoomId: Long) {
-        recorderRepository.transcription.collect {
-            chatMessageRepository.saveChatMessage(
-                ChatMessage(
-                    chatRoomId,
-                    it,
-                    role = Role.USER
-                )
-            )
-
-            chatbot.getResponse(it).content?.let { respMessage ->
-                ttsManager.speak(respMessage)
-
-                chatMessageRepository.saveChatMessage(
-                    ChatMessage(
-                        chatRoomId,
-                        respMessage,
-                        role = Role.BOT
-                    )
-                )
-            }
-        }
-    }
-
 }
